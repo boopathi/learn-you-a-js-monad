@@ -1,0 +1,15 @@
+{
+  "name": "learn-you-js-monad",
+  "version": "1.0.0",
+  "description": "A step to learn monads via JavaScript",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:boopathi/learn-you-js-monad"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

@@ -217,3 +217,5 @@ num.fmap = func(num._fmap);
   let fb = num.fmap.call(addOne).call(Just(num(2)));
   assert(equal.call(Just.unwrap(fb), num(3)), '1+2=3 with functor fmap');
 })();
+
+// the num type satisfies the typeclass functor as we were able to define fmap for it
