@@ -20,7 +20,7 @@ export function unwrap(a) {
 }
 
 function checker(type) {
-  return function() {
+  return function(a) {
     if (typeof a === 'undefined' || a === null) return false;
     if (typeof a === 'object' && a.type === type) return true;
     return false;

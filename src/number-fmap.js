@@ -4,6 +4,7 @@ import {curry} from './curry';
 import {
   just,
   nothing,
+  unwrap,
   isJust,
   isNothing
 } from './just';
@@ -14,9 +15,13 @@ function _fmap(fn, fa) {
     throw TypeError('fn should be a function');
   // to check
   if (isJust(fa)) {
-    let result = fn(fa);
-    if (typeof result !== typeof fa)
-      throw new TypeError('fn should be a function : a -> b where a and b should be of same types');
+    let a = unwrap(fa);
+    let result = fn(a);
+    if (typeof result !== typeof a)
+      throw new TypeError(
+        `fn should be a function : a -> b where a and b should be of same types.
+        Got ${typeof result}, ${typeof a}`
+      );
     return just(result);
   } else if (isNothing(fa)) {
     return nothing();

@@ -1,13 +1,5 @@
 // Lists are functors too
 
-import {curry} from './curry';
-import {
-  just,
-  nothing,
-  isJust,
-  isNothing
-} from './just';
-
-function _fmap() {
-
+export function fmap(a) {
+  return Array.prototype.map.call(a);
 }
