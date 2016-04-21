@@ -8,13 +8,13 @@
  * original function defined
  */
 export function curry(fn, length, _args) {
-  // args is the stack (state) that's updated & passed to the inner functions
-  let args = typeof _args === 'undefined' ? [] : (Array.isArray(_args) ? _args : [_args]);
-  // nargs determines the `n`th recursion step
-  let nargs = typeof length === 'undefined' ? fn.length : length;
-
   // return a function assuming it takes one argument
   return function(a) {
+    // args is the stack (state) that's updated & passed to the inner functions
+    let args = typeof _args === 'undefined' ? [] : (Array.isArray(_args) ? _args : [_args]);
+    // nargs determines the `n`th recursion step
+    let nargs = typeof length === 'undefined' ? fn.length : length;
+
     // if there is no argument, then simply execute the function
     if (nargs === 0) return fn();
 

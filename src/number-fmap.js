@@ -10,7 +10,7 @@ import {
 } from './just';
 
 // fmap :: (a -> b) -> fa -> fb
-function _fmap(fn, fa) {
+export let fmap = curry(function _fmap(fn, fa) {
   if (typeof fn !== 'function')
     throw TypeError('fn should be a function');
   // to check
@@ -33,6 +33,4 @@ function _fmap(fn, fa) {
       return fn(fa(val));
     }
   }
-}
-
-export let fmap = curry(_fmap);
+});

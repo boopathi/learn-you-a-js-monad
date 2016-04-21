@@ -13,7 +13,12 @@ function fmap(type) {
 
 test('fmap for number', function(t) {
   const increment = a => a + 1;
-  t.equal(fmap('number')(increment)(just(1)).type, 'just');
-  t.equal(fmap('number')(increment)(just(1)).value, 2);
+  const one = fmap('number')(increment)(nothing());
+  t.equal(one.type, 'nothing');
+
+  const two = fmap('number')(increment)(just(1));
+  // console.log(two);
+  t.equal(two.type, 'just');
+  t.equal(two.value, 2);
   t.end();
 });
