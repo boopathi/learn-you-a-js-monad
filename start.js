@@ -143,21 +143,12 @@ const equal = func(_equal);
  * Now is the time to assert our funcs
  */
 (function() {
-  let one = num(1);
-  let two = num(2);
-  let three = num(3);
-  /**
-   * I know it's a bit idiotic to do this. You're welcome to discontinue.
-   *
-   * And for the patient ones, let's just stop here at 3 numbers
-   * and start doing some operations on them
-   */
-  let onePlusTwo = add.call(one).call(two);
-  assert(equal.call(three).call(onePlusTwo), '1+2=3 with funcs');
+  let onePlusTwo = add.call(num(1)).call(num(2));
+  assert(equal.call(num(3)).call(onePlusTwo), '1+2=3 with funcs');
 })();
 
 /**
- * Enter the context
+ * Enter the Just
  * A context is a wrapper for a value. Imagine it to be box or a container
  *
  * It can either hold a value or it doesn't
@@ -190,17 +181,39 @@ const equal = func(_equal);
  *
  */
 function Just(a) {
+  // Just() => nothing
   if (typeof a === 'undefined') return {type: 'nothing'};
+  // Just(Just(a)) => Just(a)
   if (a.type === 'just' || a.type === 'nothing') return a;
   if (a.value === null || typeof a.value === 'undefined')
-    return {
-      type: 'nothing'
-    };
+    return Just();
   else return {
     type: 'just',
     value: a
   };
 }
+Just.unwrap = function(fa) {
+  if (fa.type !== 'just') throw new Error('Expected Just, got ' + fa.type);
+  return fa.value;
+};
 
-var i = num(1), j = num(2);
-console.log(add.call(i).call(j));
+// just a convenient alias
+function Nothing() {
+  return Just();
+}
+
+// fmap :: (a -> b) -> fa -> fb
+num._fmap = function(fn, fa) {
+  if (fa.type === 'just') return Just(fn.call(fa));
+  else if (fa.type === 'nothing') return Nothing();
+  else throw new TypeError('Expected a just or nothing');
+};
+// and as usual we wrap it under a context
+num.fmap = func(num._fmap);
+
+// some tests
+(function() {
+  let addOne = add.call(num(1));
+  let fb = num.fmap.call(addOne).call(Just(num(2)));
+  assert(equal.call(Just.unwrap(fb), num(3)), '1+2=3 with functor fmap');
+})();
