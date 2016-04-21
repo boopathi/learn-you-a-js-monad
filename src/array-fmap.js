@@ -1,5 +1,7 @@
 // Lists are functors too
 
-export function fmap(a) {
-  return Array.prototype.map.call(a);
+export function fmap(fn) {
+  return function (arr) {
+    return arr.map(fn);
+  }
 }

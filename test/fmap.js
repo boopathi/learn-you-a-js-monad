@@ -20,5 +20,15 @@ test('fmap for number', function(t) {
   // console.log(two);
   t.equal(two.type, 'just');
   t.equal(two.value, 2);
+
+  const doubleIncrement = fmap('number')(increment)(increment);
+  t.equal(doubleIncrement(1), 3);
+  t.end();
+});
+
+test('fmap for array', function(t) {
+  const increment = a => a + 1;
+  const m = fmap('array')(increment)([1,2,3,4,5]);
+  console.log(m);
   t.end();
 });
