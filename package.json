@@ -1,8 +1,8 @@
 {
-  "name": "learn-you-js-monad",
+  "name": "learn-you-a-js-monad",
   "private": true,
   "version": "1.0.0",
-  "description": "A step to learn monads via JavaScript",
+  "description": "To learn monads via JavaScript",
   "scripts": {
     "build": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:boopathi/learn-you-js-monad"
+    "url": "git@github.com:boopathi/learn-you-a-js-monad"
   },
   "keywords": [],
   "author": "",
