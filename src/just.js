@@ -1,35 +1,20 @@
 export function nothing() {
-  return {
-    type: 'nothing'
-  };
+  if (!(this instanceof nothing)) return new nothing();
 }
 
 export function just(a) {
   if (a === null || typeof a === 'undefined') return nothing();
-  if (typeof a === 'object' && (a.type === 'just' || a.type === 'nothing'))
-    return a;
-  return {
-    type: 'just',
-    value: a
-  };
+  if (isJustOrNothing(a)) return a;
+  if (!(this instanceof just)) return new just(a);
+  this.value = a;
+  this.constructor = a.constructor;
 }
+
+export const isJust = a => a instanceof just;
+export const isNothing = a => a instanceof nothing;
+export const isJustOrNothing = a => isJust(a) || isNothing(a);
 
 export function unwrap(a) {
   if (!isJust(a)) throw new TypeError('Expected a to be a Just for unwrapping');
   return a.value;
-}
-
-function checker(type) {
-  return function(a) {
-    if (typeof a === 'undefined' || a === null) return false;
-    if (typeof a === 'object' && a.type === type) return true;
-    return false;
-  };
-}
-
-export let isJust = checker('just');
-export let isNothing = checker('nothing');
-
-export function isJustOrNothing(a) {
-  return isJust() || isNothing();
 }

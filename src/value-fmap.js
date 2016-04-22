@@ -1,4 +1,4 @@
-// Number type <| Functor type class
+// Value <| Functor type class
 
 import {curry} from './curry';
 import {
