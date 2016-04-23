@@ -3,7 +3,7 @@
  *
  * Not the usual curry function. This one is a little different
  *
- * It takes a function and the expected number of arguments it will take in.
+ * It takes a function and the expected number of arguments
  * Constructs a `n` level deep nested function with the final level as the
  * original function defined
  */
@@ -12,6 +12,7 @@ export function curry(fn, length, _args) {
   return function(a) {
     // args is the stack (state) that's updated & passed to the inner functions
     let args = typeof _args === 'undefined' ? [] : (Array.isArray(_args) ? _args : [_args]);
+
     // nargs determines the `n`th recursion step
     let nargs = typeof length === 'undefined' ? fn.length : length;
 

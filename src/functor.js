@@ -1,9 +1,7 @@
 import {just, nothing, isJust, isNothing, unwrap, isJustOrNothing} from './just';
+import {nullcheck} from './nullcheck';
 
-function nullcheck(fa) {
-  if (typeof fa === 'undefined' || fa === null)
-    throw new TypeError('fa is not defined');
-}
+// Todo fmap (fn.length=2) should return a function that computes
 
 export const fmap = fn => fa => {
   nullcheck(fa);
