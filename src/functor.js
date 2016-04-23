@@ -12,19 +12,19 @@ export const fmap = fn => fa => {
       const a = unwrap(fa);
       return a.constructor.fmap(fn)(a);
     case isNothing(fa): return nothing();
-    case typeof fa === 'function': return val => fn(fa(val));
-    default:
-      return fa.constructor.fmap(fn)(fa);
+    default: return fa.constructor.fmap(fn)(fa);
   }
 }
 
 // you get the unwrapped value;
 export const value = fn => a => just(fn(a));
 export const array = fn => a => a.map(fn);
+export const func = fn => a => val => fn(a(val));
 
 export function polyfill() {
   Array.fmap = array;
   Number.fmap = value;
   String.fmap = value;
   Boolean.fmap = value;
+  Function.fmap = func;
 }
