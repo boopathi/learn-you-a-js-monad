@@ -15,4 +15,4 @@ test('combinators', function (t) {
   t.assert(isNothing(just(nothing())));
   t.assert(isNothing(nothing(just(3))));
   t.end();
-})
+});
