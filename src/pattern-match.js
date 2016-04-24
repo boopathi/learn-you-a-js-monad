@@ -96,6 +96,6 @@ export function match(...args) {
       // else
       // continue
     }
-    // throw new Error('Unhandled Pattern type' + args[0], args[1]);
+    throw new Error('This input does not match any patterns: ' + a);
   }
 }
