@@ -23,7 +23,18 @@ export function isParam(a) {
 
 export const atomMatcher = (pattern, value) => isAtom(pattern) && pattern === value;
 export const paramMatcher = pattern => isParam(pattern);
-export const functionMatcher = (pattern, value) => typeof pattern === 'function' && pattern(value);
+
+// primitives
+export const numberMatcher = (pattern, value) => pattern === Number && typeof value === 'number';
+export const stringMatcher = (pattern, value) => pattern === String && typeof value === 'string';
+export const booleanMatcher = (pattern, value) => pattern === Boolean && (value === true || value === false);
+
+// functions and classes
+export const functionMatcher = (pattern, value) =>
+  typeof pattern === 'function'
+    && [Boolean, Number, String].indexOf(pattern) === -1
+    && pattern(value);
+
 export const classMatcher = (pattern, value) => typeof pattern === 'function' && value instanceof pattern;
 
 // export const arrayMatcher = {
@@ -62,10 +73,13 @@ export const nothingMatcher = {
 export const matchers = [
   atomMatcher,
   paramMatcher,
+  numberMatcher,
+  stringMatcher,
+  booleanMatcher,
   justMatcher,
   nothingMatcher,
   classMatcher,
-  functionMatcher,
+  functionMatcher
 ];
 
 export const defaultHandler = (fn, value) => fn.call(null, value);
