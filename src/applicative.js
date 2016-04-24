@@ -1,7 +1,6 @@
 import {just, nothing, isJust, isNothing, unwrap} from './just';
 import {nullcheck} from './nullcheck';
 
-
 const applicativePatternMatch = {
   pure (a) {
     return a.constructor.applicative.pure.call(null, a);
@@ -13,6 +12,7 @@ const applicativePatternMatch = {
     return a => a.constructor.applicative.just.call(null, f, a);
   }
 };
+
 export const applicative = fn => fa => {
 
 }
@@ -28,16 +28,16 @@ export const applicative = fn => fa => {
  *   applicative([fn1, fn2])([a, b, c]) => [fn1(a), fn1(b), fn1(c), fn2(a), fn2(b), fn2(c)]
  *
  */
-export const applicative = fn => fa => {
-  const isJustFn = isJust(fn);
-  const isJustFa = isJust(fa);
-
-  let f = fn, a = fa;
-  if (isJustFn) f = unwrap(fn);
-  if (isJustFa) a = unwrap(fa);
-
-  return a.constructor.applicative(f)(a);
-}
+// export const applicative = fn => fa => {
+//   const isJustFn = isJust(fn);
+//   const isJustFa = isJust(fa);
+//
+//   let f = fn, a = fa;
+//   if (isJustFn) f = unwrap(fn);
+//   if (isJustFa) a = unwrap(fa);
+//
+//   return a.constructor.applicative(f)(a);
+// }
 
 /**
  * Design decision - I don't know if this is a good design.
