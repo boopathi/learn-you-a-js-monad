@@ -2,11 +2,14 @@ import {just, nothing, isJust, isNothing, unwrap} from './just';
 
 export const PARAM = Symbol.for('@@PATTERN_MATCH_PARAMETER');
 
+// just an alias
+export const _ = PARAM;
+
 // match(
-//   [just(PARAM), function(param) {}],
+//   [just(_), function(param) {}],
 //   [nothing(), function() {}],
-//   [pure(PARAM), function(a) {}],
-//   [PARAM], function(a) {}],
+//   [pure(_), function(a) {}],
+//   [_], function(a) {}],
 //   [1], function() {}]
 // )
 
