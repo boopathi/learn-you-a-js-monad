@@ -21,24 +21,46 @@ export function isParam(a) {
   return a === PARAM;
 }
 
-export const atomMatcher = (pattern, value) => isAtom(pattern) && pattern === value;
-export const paramMatcher = pattern => isParam(pattern);
+export function atomMatcher(pattern, value) {
+  return isAtom(pattern) && pattern === value;
+}
+export function paramMatcher(pattern) {
+  return isParam(pattern);
+}
 
 // primitives
-export const numberMatcher = (pattern, value) => pattern === Number && typeof value === 'number';
-export const stringMatcher = (pattern, value) => pattern === String && typeof value === 'string';
-export const booleanMatcher = (pattern, value) => pattern === Boolean && (value === true || value === false);
+export function numberMatcher(pattern, value) {
+  return pattern === Number && typeof value === 'number';
+}
+export function stringMatcher(pattern, value) {
+  return pattern === String && typeof value === 'string';
+}
+export function booleanMatcher(pattern, value) {
+  return pattern === Boolean && (value === true || value === false);
+}
 
 // functions and classes
-export const functionMatcher = (pattern, value) =>
-  typeof pattern === 'function'
+export function functionMatcher(pattern, value) {
+  return typeof pattern === 'function'
     && [Boolean, Number, String].indexOf(pattern) === -1
-    && pattern(value);
+    && typeof value !== 'function';
+}
 
-export const classMatcher = (pattern, value) =>
-  typeof pattern === 'function'
+export function customMatcher(pattern, value) {
+  return functionMatcher(pattern, value)
+    && pattern(value);
+}
+
+export function classMatcher(pattern, value) {
+  return typeof pattern === 'function'
     && typeof pattern.prototype === 'object'
+    && typeof value !== 'function';
+}
+
+export function instanceMatcher(pattern, value) {
+  return classMatcher(pattern, value)
     && value instanceof pattern;
+}
 
 // export const arrayMatcher = {
 //   match(pattern) {
@@ -56,6 +78,8 @@ export const classMatcher = (pattern, value) =>
 // };
 
 export const justMatcher = {
+  // for debugging purposes
+  name: 'justMatcher',
   match(pattern, value) {
     return isJust(pattern) && isJust(value);
   },
@@ -67,6 +91,8 @@ export const justMatcher = {
 };
 
 export const nothingMatcher = {
+  // for debugging purposes
+  name: 'nothingMatcher',
   match(pattern, value) {
     return isNothing(pattern) && isNothing(value);
   },
@@ -83,7 +109,9 @@ export const matchers = [
   booleanMatcher,
   justMatcher,
   nothingMatcher,
+  instanceMatcher,
   classMatcher,
+  customMatcher,
   functionMatcher
 ];
 
@@ -99,12 +127,17 @@ export function isMatchAll(m, patterns, values) {
 
 export function getMatchingHandlers(patterns, values) {
   let matched = [];
+  // some meta data for debugging
+  matched.meta = [];
   for (let i = 0; i < patterns.length; i++) {
     for (let m of matchers) {
-      if (typeof m === 'function' && m(patterns[i], values[i]))
+      if (typeof m === 'function' && m(patterns[i], values[i])) {
         matched.push(defaultHandler);
-      else if (typeof m === 'object' && m.match(patterns[i], values[i]))
+        matched.meta.push(m.name);
+      } else if (typeof m === 'object' && m.match(patterns[i], values[i])) {
         matched.push(m.handle);
+        matched.meta.push(m.name);
+      }
     }
   }
   if (matched.length === patterns.length) return matched;
@@ -141,6 +174,13 @@ export function match(...args) {
         for (let i = 0; i < handlers.length; i++) {
           fnargs.push(handlers[i].call(null, a[i], patterns[i], fn));
         }
+
+        // DEBUG
+        // console.log("INPUT PATTERNS = ", patterns);
+        // console.log("INPUT VALUES = ", a);
+        // console.log("MATCHERS = ", handlers.meta);
+        // console.log("PARAMS = ", fnargs);
+
         return fn.apply(null, fnargs);
       }
       // else

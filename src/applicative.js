@@ -1,73 +1,56 @@
 import {just, nothing, isJust, isNothing, unwrap} from './just';
+import {match, _} from './pattern-match';
+import {curry} from './curry';
 import {nullcheck} from './nullcheck';
+import {flatten} from './utils';
 
-const applicativePatternMatch = {
-  pure (a) {
-    return a.constructor.applicative.pure.call(null, a);
-  },
-  nothing (a) {
-    return a.constructor.applicative.nothing.call(null, a);
-  },
-  just (f) {
-    return a => a.constructor.applicative.just.call(null, f, a);
+/**
+ * The Applicative operator
+ *
+ * Operator overloading or definition is not possible in JavaScript,
+ * So, we define the binary operator <*> as function applicative
+ *
+ */
+export const applicativeJust = (f, a) => {
+  switch (true) {
+    case typeof f === 'function': return just(f(a));
+    case Array.isArray(f) && Array.isArray(a):
+      return flatten(f.map(fn => a.map(_a => fn(_a))));
+    case Array.isArray(f) && !Array.isArray(a):
+      throw new Error('Applicative takes either two arrays or contexts');
+    default:
+      console.log(f, a);
+      throw new TypeError('Didn\'t match any patterns for applicatives, check your input');
   }
-};
-
-export const applicative = fn => fa => {
-
 }
 
-/**
- * In Applicatives we have both the function and the value
- * wrapped in a context/box
- *
- * So the situations are:
- *   // on contexts
- *   applicative(just(fn))(just(value)) => just(answer)
- *   // on lists
- *   applicative([fn1, fn2])([a, b, c]) => [fn1(a), fn1(b), fn1(c), fn2(a), fn2(b), fn2(c)]
- *
- */
-// export const applicative = fn => fa => {
-//   const isJustFn = isJust(fn);
-//   const isJustFa = isJust(fa);
-//
-//   let f = fn, a = fa;
-//   if (isJustFn) f = unwrap(fn);
-//   if (isJustFa) a = unwrap(fa);
-//
-//   return a.constructor.applicative(f)(a);
-// }
+export const applicative = curry(
+  match(
+    [just(_), just(_), applicativeJust],
+    [nothing(), just(_), () => nothing()],
+    [just(_), nothing(), () => nothing()],
+    [nothing(), nothing(), () => nothing()],
+    [just(_), _, applicativeJust],
+    [_, just(_), applicativeJust],
+    [_, _, applicativeJust]
+  ),
+  /**
+   * The number of arguments the applicative always takes
+   * is 2. And we build 2 level deep nested/curried function
+   */
+  2
+);
 
 /**
- * Design decision - I don't know if this is a good design.
- * Just grokking up things so it looks sane to implement for any type
+ * The MayBe Applicative
+ * instance Applicative Maybe where
+ *   pure = Just
+ *   Nothing <*> _ = Nothing
+ *   (Just f) <*> something = fmap f something
  *
- * When you pass in an array of functions and an array of values,
- * the Array.applicative kicks in first, unwraps the values array and
- * passes on to the value applicative.
- *
- * So, all the single value applicatives have to destructure the
- * array of functions and apply an array of results
  */
-
-// you get the unwrapped values and you wrap it after applying the function
-export const value = fs => a => {
-  if (Array.isArray(fs)) return fs.map(f => f(a));
-  return fs(a);
-}
-
-/**
- * applicative on an array of functions over array of values is the
- * cartesian product of fns over values
- *
- * resulting in a matrix which is then flattened to get the result
- */
-export const array = fns => a => a.map(val => applicative(fns)(val));
-
-export function polyfill() {
-  Array.applicative = array;
-  Number.applicative = value;
-  String.applicative = value;
-  Boolean.applicative = value;
-}
+export const MayBe = match(
+  [nothing(), _, () => nothing()],
+  [just(_), _, (a, b) => fmap(a)(b)],
+  [_, a => just(a)]
+);
