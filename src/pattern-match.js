@@ -43,22 +43,14 @@ export function booleanMatcher(pattern, value) {
 export function functionMatcher(pattern, value) {
   return typeof pattern === 'function'
     && [Boolean, Number, String].indexOf(pattern) === -1
-    && typeof value !== 'function';
-}
-
-export function customMatcher(pattern, value) {
-  return functionMatcher(pattern, value)
+    && typeof value !== 'function'
     && pattern(value);
 }
 
-export function classMatcher(pattern, value) {
-  return typeof pattern === 'function'
-    && typeof pattern.prototype === 'object'
-    && typeof value !== 'function';
-}
-
 export function instanceMatcher(pattern, value) {
-  return classMatcher(pattern, value)
+  return typeof pattern === 'function'
+    && [Boolean, Number, String].indexOf(pattern) === -1
+    && typeof pattern.prototype === 'object'
     && value instanceof pattern;
 }
 
@@ -110,8 +102,6 @@ export const matchers = [
   justMatcher,
   nothingMatcher,
   instanceMatcher,
-  classMatcher,
-  customMatcher,
   functionMatcher
 ];
 
@@ -176,10 +166,10 @@ export function match(...args) {
         }
 
         // DEBUG
-        // console.log("INPUT PATTERNS = ", patterns);
         // console.log("INPUT VALUES = ", a);
         // console.log("MATCHERS = ", handlers.meta);
         // console.log("PARAMS = ", fnargs);
+        // console.log("Function = ", fn.toString());
 
         return fn.apply(null, fnargs);
       }

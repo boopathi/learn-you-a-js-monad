@@ -25,9 +25,9 @@ test('just/nothing pattern matching', function(t) {
 
 test('Numbers, Strings, Booleans', function(t) {
   let tester = match(
-    [Number, _ => 1],
-    [String, _ => 2],
-    [Boolean, _ => 3]
+    [Number, () => 1],
+    [String, () => 2],
+    [Boolean, () => 3]
   );
   t.equal( tester( 1    ), 1 );
   t.equal( tester( 'a'  ), 2 );

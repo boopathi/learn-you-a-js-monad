@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
-    "test": "tape -r babel-register test/applicative.js"
+    "test": "tape -r babel-register test/*.js"
   },
   "repository": {
     "type": "git",
