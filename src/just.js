@@ -15,6 +15,6 @@ export const isNothing = a => a instanceof nothing;
 export const isJustOrNothing = a => isJust(a) || isNothing(a);
 
 export function unwrap(a) {
-  if (!isJust(a)) throw new TypeError('Expected a to be a Just for unwrapping');
+  if (!isJust(a)) throw new TypeError(`Expected ${a} to be a Just for unwrapping`);
   return a.value;
 }

@@ -35,7 +35,10 @@ export const functionMatcher = (pattern, value) =>
     && [Boolean, Number, String].indexOf(pattern) === -1
     && pattern(value);
 
-export const classMatcher = (pattern, value) => typeof pattern === 'function' && value instanceof pattern;
+export const classMatcher = (pattern, value) =>
+  typeof pattern === 'function'
+    && typeof pattern.prototype === 'object'
+    && value instanceof pattern;
 
 // export const arrayMatcher = {
 //   match(pattern) {
@@ -56,8 +59,10 @@ export const justMatcher = {
   match(pattern, value) {
     return isJust(pattern) && isJust(value);
   },
-  handle(fn, value, pattern) {
-    return match([unwrap(pattern), fn])(unwrap(value));
+  handle(value, pattern) {
+    return unwrap(value);
+    // won't work because it applies one value
+    // return match([unwrap(pattern), fn])(unwrap(value));
   }
 };
 
@@ -65,8 +70,8 @@ export const nothingMatcher = {
   match(pattern, value) {
     return isNothing(pattern) && isNothing(value);
   },
-  handle(fn) {
-    return fn.call();
+  handle() {
+    return;
   }
 };
 
@@ -82,33 +87,61 @@ export const matchers = [
   functionMatcher
 ];
 
-export const defaultHandler = (fn, value) => fn.call(null, value);
+export const defaultHandler = (value, pattern) => value;
 
-export function getMatchingHandler(pattern, fn, value) {
-  for (let m of matchers) {
-    if (typeof m === 'function' && m(pattern, value))
-      return defaultHandler;
-    else if (typeof m === 'object' && m.match(pattern, value))
-      return m.handle;
+export function isMatchAll(m, patterns, values) {
+  let matched = true;
+  for (let i = 0; i < patterns.length; i++) {
+    if (!(m(patterns[0], values[0]))) matched = false;
   }
+  return matched;
 }
 
+export function getMatchingHandlers(patterns, values) {
+  let matched = [];
+  for (let i = 0; i < patterns.length; i++) {
+    for (let m of matchers) {
+      if (typeof m === 'function' && m(patterns[i], values[i]))
+        matched.push(defaultHandler);
+      else if (typeof m === 'object' && m.match(patterns[i], values[i]))
+        matched.push(m.handle);
+    }
+  }
+  if (matched.length === patterns.length) return matched;
+}
+
+/*
+let x = match(
+  [just(_), _, (a, b) => {}]
+)
+x(just(5), 6);
+ */
+
 export function match(...args) {
-  return (a) => {
+  return (...a) => {
     for (let arg of args) {
       if (!Array.isArray(arg)) throw new TypeError('Expected an array for pattern matching');
 
-      const pattern = arg[0];
-      const fn = arg[1];
+      const params = [...arg];
+
+      const fn = params.pop();
+      const patterns = params;
+      // console.log(patterns, patterns.length, fn, a, a.length);
+      // quick exit
+      // console.log(patterns, a);
+      if (patterns.length !== a.length)
+        continue;
 
       // if there is a match, return immediately after execution
 
-      const handler = getMatchingHandler(pattern, fn, a);
+      const handlers = getMatchingHandlers(patterns, a);
 
-      if (typeof handler === 'function') {
-        // there is a match and we can handle and return
-        // handlers take signature fn, a, pattern
-        return handler.call(null, fn, a, pattern);
+      if (Array.isArray(handlers)) {
+        let fnargs = [];
+        for (let i = 0; i < handlers.length; i++) {
+          fnargs.push(handlers[i].call(null, a[i], patterns[i], fn));
+        }
+        return fn.apply(null, fnargs);
       }
       // else
       // continue
