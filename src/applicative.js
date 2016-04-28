@@ -19,8 +19,7 @@ export const applicativeJust = (f, a) => {
     case Array.isArray(f) && !Array.isArray(a):
       throw new Error('Applicative takes either two arrays or contexts');
     default:
-      console.log(f, a);
-      throw new TypeError('Didn\'t match any patterns for applicatives, check your input');
+      throw new TypeError(`(${f} ${a} Didn't match any patterns for applicatives, check your input`);
   }
 }
 

@@ -1,4 +1,5 @@
 import {just, nothing, isJust, isNothing, unwrap} from './just';
+import {log} from './log';
 
 export const PARAM = Symbol.for('@@PATTERN_MATCH_PARAMETER');
 
@@ -105,7 +106,9 @@ export const matchers = [
   functionMatcher
 ];
 
-export const defaultHandler = (value, pattern) => value;
+export function defaultHandler(value, pattern) {
+  return value;
+}
 
 export function isMatchAll(m, patterns, values) {
   let matched = true;
@@ -141,7 +144,7 @@ x(just(5), 6);
  */
 
 export function match(...args) {
-  return (...a) => {
+  return function matcher(...a) {
     for (let arg of args) {
       if (!Array.isArray(arg)) throw new TypeError('Expected an array for pattern matching');
 
@@ -149,9 +152,9 @@ export function match(...args) {
 
       const fn = params.pop();
       const patterns = params;
-      // console.log(patterns, patterns.length, fn, a, a.length);
+      // log(patterns, patterns.length, fn, a, a.length);
       // quick exit
-      // console.log(patterns, a);
+      // log(patterns, a);
       if (patterns.length !== a.length)
         continue;
 
@@ -166,10 +169,10 @@ export function match(...args) {
         }
 
         // DEBUG
-        // console.log("INPUT VALUES = ", a);
-        // console.log("MATCHERS = ", handlers.meta);
-        // console.log("PARAMS = ", fnargs);
-        // console.log("Function = ", fn.toString());
+        // log("INPUT VALUES = ", a);
+        // log("MATCHERS = ", handlers.meta);
+        // log("PARAMS = ", fnargs);
+        // log("Function = ", fn.toString());
 
         return fn.apply(null, fnargs);
       }
