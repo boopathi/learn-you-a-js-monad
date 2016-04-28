@@ -47,7 +47,7 @@ class just {
 class nothing {}
 ```
 
-But, this comes with a problem - defining our custom types - to do something useful with this type - we need a way to extract the value out every single time. And you're write, so we are going to write a function called `unwrap` that does exactly this.
+But, this comes with a problem (defining our custom types). To do something useful with this type, we need a way to extract the value out every single time. And you're right, we are going to write a function called `unwrap` that does exactly this.
 
 ```js
 function unwrap(c) {
