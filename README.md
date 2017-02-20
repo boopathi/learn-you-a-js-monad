@@ -1,5 +1,7 @@
 # learn you a js monad
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/boopathi/learn-you-a-js-monad.svg)](https://greenkeeper.io/)
+
 #### Are you looking to use something in Production?
 
 Definitely not for you
